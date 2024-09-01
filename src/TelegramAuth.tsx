@@ -107,11 +107,11 @@ const StepIndicator = styled.div`
   margin-bottom: 1.5rem;
 `;
 
-const Step = styled.div`
+const Step = styled.div<{ $active: boolean }>`
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: ${(props) => (props.active ? '#0088cc' : '#e0e0e0')};
+  background-color: ${(props) => (props.$active ? '#0088cc' : '#e0e0e0')};
   margin: 0 6px;
   transition: background-color 0.3s;
 `;
@@ -173,7 +173,7 @@ const fadeVariants = {
   visible: { opacity: 1 },
 };
 
-function TelegramAuth() {
+const TelegramAuth: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
   const [password, setPassword] = useState('');
@@ -185,13 +185,13 @@ function TelegramAuth() {
   const [showWarning, setShowWarning] = useState(false);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: number | undefined;
     if (step === 'code' && timer > 0) {
-      interval = setInterval(() => {
+      interval = window.setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);
       }, 1000);
     }
-    return () => clearInterval(interval);
+    return () => window.clearInterval(interval);
   }, [step, timer]);
 
   const handlePhoneSubmit = async (e: React.FormEvent) => {
@@ -214,9 +214,7 @@ function TelegramAuth() {
       setStep('code');
       setTimer(90);
     } catch (err) {
-      setError(
-        err.response?.data?.detail || err.message || 'An error occurred'
-      );
+      handleError(err);
     } finally {
       setLoading(false);
     }
@@ -241,7 +239,7 @@ function TelegramAuth() {
         console.log('Successfully authenticated');
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'An error occurred');
+      handleError(err);
     } finally {
       setLoading(false);
     }
@@ -263,9 +261,19 @@ function TelegramAuth() {
         console.log('Successfully authenticated');
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'An error occurred');
+      handleError(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleError = (err: unknown) => {
+    if (axios.isAxiosError(err)) {
+      setError(err.response?.data?.detail || 'An error occurred');
+    } else if (err instanceof Error) {
+      setError(err.message);
+    } else {
+      setError('An unknown error occurred');
     }
   };
 
@@ -298,9 +306,9 @@ function TelegramAuth() {
         <Title>Telegram Authentication</Title>
 
         <StepIndicator>
-          <Step active={step === 'phone'} />
-          <Step active={step === 'code'} />
-          <Step active={step === 'password'} />
+          <Step $active={step === 'phone'} />
+          <Step $active={step === 'code'} />
+          <Step $active={step === 'password'} />
         </StepIndicator>
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -403,6 +411,6 @@ function TelegramAuth() {
       </AuthContainer>
     </PageContainer>
   );
-}
+};
 
 export default TelegramAuth;
