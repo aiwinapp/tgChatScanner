@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
-import { FaSearch, FaRobot, FaChartBar, FaRocket, FaComments, FaAd, FaArrowRight, FaCheck, FaInfoCircle } from 'react-icons/fa';
+import { FaSearch, FaRobot, FaChartBar, FaRocket, FaComments, FaAd, FaArrowRight, FaCheck, FaInfoCircle, FaBrain, FaUsers, FaPercentage, FaStar, FaClock, FaBullseye, FaGlobe } from 'react-icons/fa';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import './App.css';
+import { motion } from 'framer-motion';
 
 const StyledSignInButton: React.FC<{ className?: string }> = ({ className }) => (
   <div className={className}>
@@ -51,10 +52,20 @@ const FAQItem: React.FC<{ question: string, answer: string }> = ({ question, ans
   );
 };
 
+// Определим тип для плана
+type Plan = {
+  name: string;
+  monthlyPrice: number;
+  annualPrice: number;
+  features: { text: string; tooltip: string }[];
+  popular: boolean;
+  discount: string | null;
+};
+
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAnnual, setIsAnnual] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
   const plans = [
     {
@@ -62,7 +73,7 @@ function App() {
       monthlyPrice: 1990,
       annualPrice: 19900,
       features: [
-        { text: 'Анализ до 100 чатов в месяц', tooltip: 'Ограничение на количество анализируемых чатов' },
+        { text: 'Анализ до 100 чатов в месяц', tooltip: 'Ограничение на кличество нализируемых чатов' },
         { text: 'Базовая AI-аналитика', tooltip: 'Основные метрики и инсайты' },
         { text: 'Еженедельные отчеты', tooltip: 'Отчеты, отправляемые каждую неделю' },
         { text: 'Email поддержка', tooltip: 'Поддержка через электронную почту' }
@@ -71,7 +82,7 @@ function App() {
       discount: null
     },
     {
-      name: 'Продвинутый',
+      name: 'Продвинтый',
       monthlyPrice: 4990,
       annualPrice: 49900,
       features: [
@@ -91,8 +102,8 @@ function App() {
       features: [
         { text: 'Безлимитный анализ чатов', tooltip: 'Анализируйте любое количество чатов' },
         { text: 'Премиум AI-аналитика', tooltip: 'Самые передовые алгоритмы анализа' },
-        { text: 'Отчеты в реальном времени', tooltip: 'Мгновенный доступ к актуальным данным' },
-        { text: 'Персональный менеджер', tooltip: 'Выделенный специалист для вашего аккаунта' },
+        { text: 'Отчеты в реальном времени', tooltip: 'Мговенный доступ к актуальным данным' },
+        { text: 'Персональный менеджер', tooltip: 'Выделенный специаист для вашего аккаунта' },
         { text: 'API доступ', tooltip: 'Интегрируйте наши данные в свои системы' },
         { text: 'Индивидуальная настройка', tooltip: 'Настройка под ваши уникальные потребности' }
       ],
@@ -113,7 +124,10 @@ function App() {
     <div className="app-container">
       <header className={`bg-white shadow-md sticky top-0 z-10 w-full transition-all duration-300 ${isScrolled ? 'py-2 bg-blue-600' : 'py-4 bg-white'}`}>
         <div className="container mx-auto px-4 flex justify-between items-center">
-          <div className="text-3xl font-bold text-blue-600">TeleScanner</div>
+          <div className="flex items-center space-x-2">
+            <FaBrain className="text-3xl text-blue-600" /> {/* Добавлена иконка логотипа */}
+            <div className="text-3xl font-bold text-blue-600">TeleScanner</div>
+          </div>
           <nav className="hidden md:flex space-x-8">
             <a href="#features" className="text-gray-700 hover:text-blue-600 transition duration-300">Преимущества</a>
             <a href="#how-it-works" className="text-gray-700 hover:text-blue-600 transition duration-300">Как это работает</a>
@@ -133,15 +147,53 @@ function App() {
       <div className="content-container">
         <div className="centered-content">
           <main>
-            <section className="hero bg-gradient-to-r from-blue-600 to-blue-400 text-white py-32 animate-fadeIn">
-              <div className="container mx-auto px-4 text-center">
-                <h1 className="text-5xl md:text-6xl font-bold mb-6">AI-Powered Telegram Chat Scanner</h1>
-                <p className="text-2xl mb-12">Найдите идеальные чаты для вашей рекламы с помощью искусственного интеллекта</p>
-                <button className="btn btn-secondary text-lg px-8 py-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
-                  <FaSearch className="inline mr-2" />
-                  Начать умный поиск чатов
-                </button>
+            <section className="hero bg-gradient-to-r from-blue-600 to-blue-400 text-white py-20 md:py-32 relative overflow-hidden">
+              <div className="container mx-auto px-4 relative z-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="text-center max-w-4xl mx-auto"
+                >
+                  <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                    AI-Powered Telegram <br className="hidden md:inline" /> Chat Scanner
+                  </h1>
+                  <p className="text-lg md:text-2xl mb-8 md:mb-12 max-w-2xl mx-auto">
+                    Найдите идеальные чаты для вашей рекламы с помощью искусственного интеллекта
+                  </p>
+                  <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="btn btn-primary text-lg px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center w-full sm:w-auto justify-center"
+                    >
+                      <FaSearch className="mr-2" />
+                      Начать умный поиск
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="btn btn-secondary text-lg px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center w-full sm:w-auto justify-center"
+                    >
+                      Узнать больше
+                      <FaArrowRight className="ml-2" />
+                    </motion.button>
+                  </div>
+                </motion.div>
               </div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 1 }}
+                className="absolute inset-0 z-0"
+              >
+                <div className="absolute top-20 left-10 w-20 h-20 bg-blue-300 rounded-full opacity-20"></div>
+                <div className="absolute bottom-20 right-10 w-32 h-32 bg-blue-300 rounded-full opacity-20"></div>
+                <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-300 rounded-full opacity-20"></div>
+                {/* Add more decorative elements */}
+                <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-blue-300 rounded-full opacity-20"></div>
+                <div className="absolute bottom-1/4 left-1/3 w-12 h-12 bg-blue-300 rounded-full opacity-20"></div>
+              </motion.div>
             </section>
             
             <section id="features" className="py-24 bg-gray-50 animate-slideIn">
@@ -150,7 +202,7 @@ function App() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                   <div className="card hover:bg-blue-50 transform hover:-translate-y-2 transition-all duration-300">
                     <FaRobot className="text-blue-600 text-5xl mb-6 mx-auto" />
-                    <h3 className="text-2xl font-semibold mb-4">Умный анализ чатов</h3>
+                    <h3 className="text-2xl font-semibold mb-4">Умнй анализ чатов</h3>
                     <p className="text-gray-600">AI анализирует активность и тематику чатов для точного таргетинга вашей рекламы</p>
                   </div>
                   <div className="card hover:bg-blue-50 transform hover:-translate-y-2 transition-all duration-300">
@@ -172,50 +224,115 @@ function App() {
               </div>
             </section>
             
-            <section id="statistics" className="py-24 bg-blue-600 text-white">
+            <section id="how-it-works" className="py-24 bg-white">
               <div className="container mx-auto px-4">
-                <h2 className="section-title text-4xl mb-16">Наша статистика</h2>
+                <h2 className="section-title text-4xl mb-16 text-center">Как работает TeleScanner</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                   <div className="text-center">
-                    <FaComments className="text-5xl mb-4 mx-auto" />
-                    <div className="text-5xl font-bold mb-2">
-                      <AnimatedCounter end={1000000} duration={2000} />+
+                    <div className="bg-blue-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                      <FaSearch className="text-blue-600 text-4xl" />
                     </div>
-                    <p>Проанализированных чатов</p>
+                    <h3 className="text-2xl font-semibold mb-4">1. Сканирование чатов</h3>
+                    <p className="text-gray-600">AI-алгоритм сканирует тысячи Telegram-чатов, анализируя их контент и актиность.</p>
                   </div>
                   <div className="text-center">
-                    <FaAd className="text-5xl mb-4 mx-auto" />
-                    <div className="text-5xl font-bold mb-2">
-                      <AnimatedCounter end={50000} duration={2000} />+
+                    <div className="bg-blue-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                      <FaBrain className="text-blue-600 text-4xl" />
                     </div>
-                    <p>Успешных рекламных кампаний</p>
+                    <h3 className="text-2xl font-semibold mb-4">2. AI-анализ</h3>
+                    <p className="text-gray-600">Искусственный интеллект обрабатывает данные, выявляя наиболее подходящие площадки для вашей рекламы.</p>
                   </div>
                   <div className="text-center">
-                    <FaChartBar className="text-5xl mb-4 mx-auto" />
-                    <div className="text-5xl font-bold mb-2">
-                      <AnimatedCounter end={98} duration={2000} />%
+                    <div className="bg-blue-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                      <FaChartBar className="text-blue-600 text-4xl" />
                     </div>
-                    <p>Точность AI-анализа</p>
+                    <h3 className="text-2xl font-semibold mb-4">3. Результаты и инсайты</h3>
+                    <p className="text-gray-600">Получите детальный отчет с рекомендациями по размещению рекламы и аналитикой потенциальной аудитории.</p>
                   </div>
                 </div>
               </div>
             </section>
 
-            <section id="testimonials" className="py-24">
+            <section id="statistics" className="py-24 bg-white">
               <div className="container mx-auto px-4">
-                <h2 className="section-title text-4xl mb-16">Отзывы рекламодателей</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-                  <div className="bg-white p-6 rounded-lg shadow-md">
-                    <p className="mb-4">"TeleScanner помог нам найти идеальные чаты для нашей рекламы, увеличив ROI на 40%!"</p>
-                    <p className="font-semibold">- Анна, digital-маркетолог</p>
+                <h2 className="section-title text-4xl mb-16 text-gray-800">Наша статистика</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <StatItem icon={FaComments} value={1000000} label="Проанализированных чатов" />
+                  <StatItem icon={FaAd} value={500} label="Успешных рекламных кампаний" />
+                  <StatItem icon={FaChartBar} value={98} label="Точность AI-анализа" suffix="%" />
+                  <StatItem icon={FaUsers} value={100} label="Довольных клиентов" />
+                  <StatItem icon={FaRocket} value={30} label="Средний рост ROI" suffix="%" />
+                  <StatItem icon={FaClock} value={40} label="Экономия времени на поиск" suffix="%" />
+                  <StatItem icon={FaBullseye} value={85} label="Точность таргетинга" suffix="%" />
+                  <StatItem icon={FaGlobe} value={20} label="Стран использования" />
+                  <StatItem icon={FaPercentage} value={95} label="Удовлетворенность клиентов" suffix="%" />
+                </div>
+              </div>
+            </section>
+
+            <section id="testimonials" className="py-24 bg-gray-50">
+              <div className="container mx-auto px-4">
+                <h2 className="section-title text-4xl mb-16 text-center">Отзывы рекламодателей</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="bg-gradient-to-r from-white to-gray-100 p-6 rounded-lg shadow-md transform hover:scale-105 hover:-translate-y-2 transition-all duration-300">
+                    <p className="mb-4 text-lg italic text-gray-700">"TeleScanner помог нам найти идеальные чаты для нашей рекламы, увеличив ROI на 40%!"</p>
+                    <hr className="my-4 border-gray-300" />
+                    <p className="font-semibold text-gray-800">- Анна, digital-маркетолог</p>
+                    <div className="flex mt-4">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar key={i} className="text-yellow-500" />
+                      ))}
+                    </div>
                   </div>
-                  <div className="bg-white p-6 rounded-lg shadow-md">
-                    <p className="mb-4">"Благодаря AI-анализу мы смогли точно определить наиболее подходящие чаты для нашего продукта."</p>
-                    <p className="font-semibold">- Иван, владелец интернет-магазина</p>
+                  <div className="bg-gradient-to-r from-white to-gray-100 p-6 rounded-lg shadow-md transform hover:scale-105 hover:-translate-y-2 transition-all duration-300">
+                    <p className="mb-4 text-lg italic text-gray-700">"Благодаря AI-анализу мы смогли точно определить наиболее подходящие чаты для нашего продукта."</p>
+                    <hr className="my-4 border-gray-300" />
+                    <p className="font-semibold text-gray-800">- Иван, владелец интернет-магазина</p>
+                    <div className="flex mt-4">
+                      {[...Array(4)].map((_, i) => (
+                        <FaStar key={i} className="text-yellow-500" />
+                      ))}
+                    </div>
                   </div>
-                  <div className="bg-white p-6 rounded-lg shadow-md">
-                    <p className="mb-4">"Автоматизация поиска рекламных площадок в Telegram сэкономила нам огромное количество времени и ресурсов."</p>
-                    <p className="font-semibold">- Мария, руководитель отдела рекламы</p>
+                  <div className="bg-gradient-to-r from-white to-gray-100 p-6 rounded-lg shadow-md transform hover:scale-105 hover:-translate-y-2 transition-all duration-300">
+                    <p className="mb-4 text-lg italic text-gray-700">"Автоматизация поиска рекламных площадок в Telegram сэкономила нам огромное количество времени и ресурсов."</p>
+                    <hr className="my-4 border-gray-300" />
+                    <p className="font-semibold text-gray-800">- Мария, руководитель отдела рекламы</p>
+                    <div className="flex mt-4">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar key={i} className="text-yellow-500" />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-white to-gray-100 p-6 rounded-lg shadow-md transform hover:scale-105 hover:-translate-y-2 transition-all duration-300">
+                    <p className="mb-4 text-lg italic text-gray-700">"С TeleScanner мы смогли значительно улучшить наши рекламные кампании, что привело к увеличению продаж на 25%!"</p>
+                    <hr className="my-4 border-gray-300" />
+                    <p className="font-semibold text-gray-800">- Сергей, директор по маркетингу</p>
+                    <div className="flex mt-4">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar key={i} className="text-yellow-500" />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-white to-gray-100 p-6 rounded-lg shadow-md transform hover:scale-105 hover:-translate-y-2 transition-all duration-300">
+                    <p className="mb-4 text-lg italic text-gray-700">"Искусственный интеллект TeleScanner помог нам найти новые рынки и расширить нашу клиентскую базу."</p>
+                    <hr className="my-4 border-gray-300" />
+                    <p className="font-semibold text-gray-800">- Ольга, менеджер по развитию бизнеса</p>
+                    <div className="flex mt-4">
+                      {[...Array(4)].map((_, i) => (
+                        <FaStar key={i} className="text-yellow-500" />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-white to-gray-100 p-6 rounded-lg shadow-md transform hover:scale-105 hover:-translate-y-2 transition-all duration-300">
+                    <p className="mb-4 text-lg italic text-gray-700">"Мы были поражены точностью анализа и рекомендаций, предоставленных TeleScanner. Это действительно изменило нашу стратегию рекламы."</p>
+                    <hr className="my-4 border-gray-300" />
+                    <p className="font-semibold text-gray-800">- Дмитрий, владелец стартапа</p>
+                    <div className="flex mt-4">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar key={i} className="text-yellow-500" />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -289,7 +406,7 @@ function App() {
                       </ul>
                       <button 
                         className="btn btn-primary w-full"
-                        onClick={() => setSelectedPlan(plan)}
+                        onClick={() => setSelectedPlan(plan as Plan)}
                       >
                         Выбрать тариф
                       </button>
@@ -356,5 +473,17 @@ function App() {
     </div>
   );
 }
+
+// Add this component outside of the App function
+const StatItem: React.FC<{ icon: IconType; value: number; label: string; suffix?: string }> = ({ icon: Icon, value, label, suffix = '' }) => (
+  <div className="text-center p-6 bg-gray-50 rounded-lg shadow-md transform hover:scale-105 transition-transform duration-300">
+    <Icon className="text-5xl mb-4 mx-auto text-blue-600" />
+    <div className="text-4xl font-bold mb-2 flex justify-center items-baseline text-gray-800">
+      <AnimatedCounter end={value} duration={2000} />
+      <span className="ml-1">{suffix}</span>
+    </div>
+    <p className="text-sm text-gray-600">{label}</p>
+  </div>
+);
 
 export default App;
