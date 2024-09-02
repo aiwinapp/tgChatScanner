@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
-import { FaSearch, FaRobot, FaChartBar, FaRocket, FaComments, FaAd, FaArrowRight, FaCheck, FaInfoCircle, FaBrain, FaUsers, FaPercentage, FaStar, FaClock, FaBullseye, FaGlobe } from 'react-icons/fa';
+import { FaSearch, FaChartBar, FaRocket, FaComments, FaAd, FaArrowRight, FaCheck, FaInfoCircle, FaBrain, FaUsers, FaPercentage, FaStar, FaClock, FaBullseye, FaGlobe, FaIndustry, FaShoppingCart, FaLaptop, FaBullhorn, FaQuestionCircle, FaFacebook, FaTwitter, FaLinkedin, FaEnvelope, FaPhone, FaMapMarkerAlt, FaChevronRight, FaLifeRing, FaCode, FaServer, FaShieldAlt, FaPaperPlane, FaTelegramPlane } from 'react-icons/fa';
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import './App.css';
 import { motion } from 'framer-motion';
 import { IconType } from 'react-icons'; // Add this import
+import { FaTelegram, FaGoogle, FaSlack, FaHubspot, FaSalesforce, FaMailchimp, FaTrello } from 'react-icons/fa';
+import { SiZapier } from 'react-icons/si';
 
 const StyledSignInButton: React.FC<{ className?: string }> = ({ className }) => (
   <div className={className}>
@@ -63,10 +65,132 @@ type Plan = {
   discount: string | null;
 };
 
+// Add this new component
+const QuizModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+
+  const questions = [
+    {
+      question: "Какая основная сфера деятельности вашего бизнеса?",
+      options: [
+        { text: "E-commerce", icon: FaShoppingCart },
+        { text: "Услуги", icon: FaBullhorn },
+        { text: "Производство", icon: FaIndustry },
+        { text: "IT", icon: FaLaptop },
+        { text: "Другое", icon: FaQuestionCircle }
+      ]
+    },
+    {
+      question: "Какой у вас целевой возрастной диапазон аудитории?",
+      options: [
+        { text: "18-24", icon: FaUsers },
+        { text: "25-34", icon: FaUsers },
+        { text: "35-44", icon: FaUsers },
+        { text: "45-54", icon: FaUsers },
+        { text: "55+", icon: FaUsers }
+      ]
+    },
+    {
+      question: "Какой у вас средний чек?",
+      options: [
+        { text: "До 1000 ₽", icon: FaPercentage },
+        { text: "1000-5000 ₽", icon: FaPercentage },
+        { text: "5000-10000 ₽", icon: FaPercentage },
+        { text: "10000-50000 ₽", icon: FaPercentage },
+        { text: "Более 50000 ₽", icon: FaPercentage }
+      ]
+    },
+    {
+      question: "Какие каналы продвижения вы уже используете?",
+      options: [
+        { text: "Социальные сети", icon: FaGlobe },
+        { text: "Контекстная реклама", icon: FaAd },
+        { text: "SEO", icon: FaSearch },
+        { text: "Наружная реклама", icon: FaBullhorn },
+        { text: "Другое", icon: FaQuestionCircle }
+      ]
+    },
+    {
+      question: "Какую основную цель вы преследуете в рекламе?",
+      options: [
+        { text: "Увеличение продаж", icon: FaShoppingCart },
+        { text: "Повышение узнаваемости бренда", icon: FaStar },
+        { text: "Лидогенерация", icon: FaUsers },
+        { text: "Запуск нового продукта", icon: FaRocket },
+        { text: "Другое", icon: FaQuestionCircle }
+      ]
+    }
+  ];
+
+  const handleAnswer = (answer: string) => {
+    setAnswers({ ...answers, [step]: answer });
+    if (step < questions.length - 1) {
+      setStep(step + 1);
+    } else {
+      console.log("Quiz completed:", answers);
+      onClose();
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 0) {
+      setStep(step - 1);
+    }
+  };
+
+  const handleSkip = () => {
+    if (step < questions.length - 1) {
+      setStep(step + 1);
+    } else {
+      console.log("Quiz completed:", answers);
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white p-8 rounded-lg max-w-md w-full relative"
+      >
+        <button 
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition"
+          onClick={onClose}
+        >
+          &times; {/* Кнопка закрытия */}
+        </button>
+        <h3 className="text-2xl font-bold mb-4">Расскажите о вашем бизнесе</h3>
+        <p className="mb-4">{questions[step].question}</p>
+        <div className="space-y-2">
+          {questions[step].options.map((option, index) => (
+            <button
+              key={index}
+              className="btn btn-secondary w-full text-left flex items-center p-3 rounded-lg shadow-md hover:bg-blue-100 transition"
+              onClick={() => handleAnswer(option.text)}
+            >
+              <option.icon className="mr-3 text-blue-500 text-2xl" /> {/* Иконка с цветом и размером */}
+              <span className="text-gray-800 font-medium">{option.text}</span> {/* Текст с улучшенным стилем */}
+            </button>
+          ))}
+        </div>
+        <div className="mt-4 flex justify-between items-center">
+          <button className="btn btn-secondary" onClick={handleBack} disabled={step === 0}>Назад</button>
+          <span>{step + 1} из {questions.length}</span>
+          <button className="btn btn-primary" onClick={handleSkip}>Пропустить</button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
 function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAnnual, setIsAnnual] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const [showQuiz, setShowQuiz] = useState(false);
 
   const plans = [
     {
@@ -88,10 +212,10 @@ function App() {
       annualPrice: 49900,
       features: [
         { text: 'Анализ до 500 чатов в месяц', tooltip: 'Расширенный лимит на анализ чатов' },
-        { text: 'Расширенная AI-аналитика', tooltip: 'Углубленный анализ и прогнозирование' },
+        { text: 'Расширенная AI-аналтика', tooltip: 'Углбленный анаи  прогнозирование' },
         { text: 'Ежедневные отчеты', tooltip: 'Отчеты, отправляемые каждый день' },
         { text: 'Приоритетная поддержка', tooltip: 'Быстрый отклик на ваши запросы' },
-        { text: 'Интеграция с CRM', tooltip: 'Возможность интеграции с вашей CRM-системой' }
+        { text: 'нтеграция с CRM', tooltip: 'Возможность интеграии с вашей CRM-системой' }
       ],
       popular: true,
       discount: '10% скидка при годовой оплате'
@@ -101,16 +225,27 @@ function App() {
       monthlyPrice: 9990,
       annualPrice: 99900,
       features: [
-        { text: 'Безлимитный анализ чатов', tooltip: 'Анализируйте любое количество чатов' },
+        { text: 'Безлимитный анализ чатв', tooltip: 'Анализируйте любое количество чатв' },
         { text: 'Премиум AI-аналитика', tooltip: 'Самые передовые алгоритмы анализа' },
         { text: 'Отчеты в реальном времени', tooltip: 'Мговенный доступ к актуальным данным' },
-        { text: 'Персональный менеджер', tooltip: 'Выделенный специаист для ваш��го аккаунта' },
-        { text: 'API доступ', tooltip: 'Интегрируйте наши данные в свои системы' },
+        { text: 'Персональный менеджер', tooltip: 'Выделенный специаист для вашго аккаунта' },
+        { text: 'API доступ', tooltip: 'Инегрируйте наши данные в свои системы' },
         { text: 'Индивидуальная настройка', tooltip: 'Настройка под ваши уникальные потребности' }
       ],
       popular: false,
       discount: '15% скидка при годовой оплате'
     }
+  ];
+
+  const integrations = [
+    { name: 'Telegram', icon: FaTelegram },
+    { name: 'Google Analytics', icon: FaGoogle },
+    { name: 'Zapier', icon: SiZapier },
+    { name: 'Slack', icon: FaSlack },
+    { name: 'HubSpot', icon: FaHubspot },
+    { name: 'Salesforce', icon: FaSalesforce },
+    { name: 'Mailchimp', icon: FaMailchimp },
+    { name: 'Trello', icon: FaTrello },
   ];
 
   useEffect(() => {
@@ -133,6 +268,7 @@ function App() {
             <a href="#features" className="text-gray-700 hover:text-blue-600 transition duration-300">Преимущества</a>
             <a href="#how-it-works" className="text-gray-700 hover:text-blue-600 transition duration-300">Как это работает</a>
             <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition duration-300">Тарифы</a>
+            <a href="#integrations" className="text-gray-700 hover:text-blue-600 transition duration-300">Интеграции</a>
           </nav>
           <div>
             <SignedOut>
@@ -148,7 +284,7 @@ function App() {
       <div className="content-container">
         <div className="centered-content">
           <main>
-            <section className="hero bg-gradient-to-r from-blue-600 to-blue-400 text-white py-20 md:py-32 relative overflow-hidden">
+            <section className="hero bg-gradient-to-b from-blue-100 via-blue-200 to-white text-gray-900 py-20 md:py-32 relative overflow-hidden">
               <div className="container mx-auto px-4 relative z-10">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -156,30 +292,58 @@ function App() {
                   transition={{ duration: 0.8 }}
                   className="text-center max-w-4xl mx-auto"
                 >
-                  <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                    AI-Powered Telegram <br className="hidden md:inline" /> Chat Scanner
-                  </h1>
-                  <p className="text-lg md:text-2xl mb-8 md:mb-12 max-w-2xl mx-auto">
+                  <motion.div 
+                    className="flex items-center justify-center space-x-2 mb-6"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                  >
+                    <FaBrain className="text-5xl text-blue-600" />
+                    <h1 className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800">
+                      TeleScanner
+                    </h1>
+                  </motion.div>
+                  <motion.p 
+                    className="text-2xl md:text-3xl mb-8 text-gray-700 leading-relaxed"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.8 }}
+                  >
+                    AI-Powered Telegram Chat Scanner
+                  </motion.p>
+                  <motion.p 
+                    className="text-lg md:text-xl mb-12 text-gray-600 max-w-2xl mx-auto"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4, duration: 0.8 }}
+                  >
                     Найдите идеальные чаты для вашей рекламы с помощью искусственного интеллекта
-                  </p>
-                  <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                  </motion.p>
+                  <motion.div 
+                    className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.8 }}
+                  >
                     <motion.button
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(59, 130, 246, 0.5)" }}
                       whileTap={{ scale: 0.95 }}
                       className="btn btn-primary text-lg px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center w-full sm:w-auto justify-center"
+                      onClick={() => setShowQuiz(true)} // Вызов квиза при нажатии
                     >
                       <FaSearch className="mr-2" />
                       Начать умный поиск
                     </motion.button>
                     <motion.button
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(255, 255, 255, 0.2)" }}
                       whileTap={{ scale: 0.95 }}
                       className="btn btn-secondary text-lg px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center w-full sm:w-auto justify-center"
                     >
+                      <FaInfoCircle className="mr-2" />
                       Узнать больше
                       <FaArrowRight className="ml-2" />
                     </motion.button>
-                  </div>
+                  </motion.div>
                 </motion.div>
               </div>
               <motion.div
@@ -188,12 +352,34 @@ function App() {
                 transition={{ delay: 0.5, duration: 1 }}
                 className="absolute inset-0 z-0"
               >
-                <div className="absolute top-20 left-10 w-20 h-20 bg-blue-300 rounded-full opacity-20"></div>
-                <div className="absolute bottom-20 right-10 w-32 h-32 bg-blue-300 rounded-full opacity-20"></div>
-                <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-300 rounded-full opacity-20"></div>
-                {/* Add more decorative elements */}
-                <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-blue-300 rounded-full opacity-20"></div>
-                <div className="absolute bottom-1/4 left-1/3 w-12 h-12 bg-blue-300 rounded-full opacity-20"></div>
+                {[...Array(10)].map((_, index) => (
+                  <motion.div
+                    key={index}
+                    className="absolute"
+                    style={{
+                      width: Math.random() * 80 + 60, // Еще больше увеличил размер иконок
+                      height: Math.random() * 80 + 60,
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                    }}
+                    animate={{
+                      y: [0, Math.random() * 200 - 100], // Плавное движение по вертикали
+                      x: [0, Math.random() * 200 - 100], // Плавное движение по горизонтали
+                      rotate: [0, 360], // Добавил вращение для более естественного движения
+                    }}
+                    transition={{
+                      duration: Math.random() * 15 + 10, // Увеличил продолжительность анимации
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                    }}
+                  >
+                    {index % 2 === 0 ? (
+                      <FaPaperPlane className="text-blue-300 opacity-70" />
+                    ) : (
+                      <FaTelegramPlane className="text-blue-300 opacity-70" />
+                    )}
+                  </motion.div>
+                ))}
               </motion.div>
             </section>
             
@@ -202,7 +388,7 @@ function App() {
                 <h2 className="section-title text-4xl mb-16">Преимущества нашего AI-сканера для поиска рекламных площадок</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                   <div className="card hover:bg-blue-50 transform hover:-translate-y-2 transition-all duration-300">
-                    <FaRobot className="text-blue-600 text-5xl mb-6 mx-auto" />
+                    <FaBrain className="text-blue-600 text-5xl mb-6 mx-auto" />
                     <h3 className="text-2xl font-semibold mb-4">Умнй анализ чатов</h3>
                     <p className="text-gray-600">AI анализирует активность и тематику чатов для точного таргетинга вашей рекламы</p>
                   </div>
@@ -221,6 +407,15 @@ function App() {
                     <h3 className="text-2xl font-semibold mb-4">Автоматизация</h3>
                     <p className="text-gray-600">AI автоматически находит и ранжирует чаты по их рекламному потенциалу</p>
                   </div>
+                </div>
+                <div className="text-center mt-12">
+                  <button 
+                    className="btn btn-primary text-lg px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                    onClick={() => setShowQuiz(true)} // Вызов квиза при нажатии
+                  >
+                    <FaRocket className="mr-2" />
+                    Попробовать бесплатно
+                  </button>
                 </div>
               </div>
             </section>
@@ -250,6 +445,15 @@ function App() {
                     <h3 className="text-2xl font-semibold mb-4">3. Результаты и инсайты</h3>
                     <p className="text-gray-600">Получите детальный отчет с рекомендациями по размещению рекламы и аналитикой потенциальной аудитории.</p>
                   </div>
+                </div>
+                <div className="text-center mt-12">
+                  <button 
+                    className="btn btn-primary text-lg px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                    onClick={() => setShowQuiz(true)} // Вызов квиза при нажатии
+                  >
+                    <FaCheck className="mr-2" />
+                    Начать бесплатный тест
+                  </button>
                 </div>
               </div>
             </section>
@@ -296,7 +500,7 @@ function App() {
                     </div>
                   </div>
                   <div className="bg-gradient-to-r from-white to-gray-100 p-6 rounded-lg shadow-md transform hover:scale-105 hover:-translate-y-2 transition-all duration-300">
-                    <p className="mb-4 text-lg italic text-gray-700">"Автоматизация поиска рекламных площадок в Telegram сэкономила нам огромное количество времени и ресурсов."</p>
+                    <p className="mb-4 text-lg italic text-gray-700">"Автоматизация поиска рекламных площадок в Telegram сэкономила нам огрмное количество времени и ресурсов."</p>
                     <hr className="my-4 border-gray-300" />
                     <p className="font-semibold text-gray-800">- Мария, руководитель отдела рекламы</p>
                     <div className="flex mt-4">
@@ -349,7 +553,7 @@ function App() {
                   />
                   <FAQItem 
                     question="Насколько эффективна реклама в найденных чатах?" 
-                    answer="По статистке наших клиентов, реклама в чатах, подобранных нашим AI, показывает в среднем на 30% более высокую конверсию по сравнению с обычным размещением."
+                    answer="По статистике наших клиентов, реклама в чатах, подобранных нашим AI, показывает в среднем на 30% более высокую конверсию по сравнению с обычным размеением."
                   />
                   <FAQItem 
                     question="Какие типы рекламы можно размещать в найденных чатах?" 
@@ -414,6 +618,15 @@ function App() {
                     </div>
                   ))}
                 </div>
+                <div className="text-center mt-12">
+                  <button 
+                    className="btn btn-primary text-lg px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                    onClick={() => setShowQuiz(true)} // Вызов квиза при нажатии
+                  >
+                    <FaPercentage className="mr-2" />
+                    Пройти квиз и получить скидку
+                  </button>
+                </div>
               </div>
             </section>
 
@@ -433,10 +646,31 @@ function App() {
               </div>
             )}
 
+            <section id="integrations" className="py-24 bg-white">
+              <div className="container mx-auto px-4">
+                <h2 className="section-title text-4xl mb-16 text-center">Интеграции и партнеры</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                  {integrations.map((integration, index) => (
+                    <div key={index} className="flex flex-col items-center justify-center p-6 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                      <integration.icon className="text-5xl mb-4 text-blue-600" />
+                      <p className="text-center font-semibold">{integration.name}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-12 text-center">
+                  <p className="text-xl mb-6">Интегрируйте TeleScanner с вашими любимыми инструментами для максимальной эффективности</p>
+                  <button className="btn btn-primary">Узнать больше о интеграциях</button>
+                </div>
+              </div>
+            </section>
+
             <section className="bg-gradient-to-r from-blue-600 to-blue-400 text-white py-24 animate-fadeIn">
               <div className="container mx-auto px-4 text-center">
                 <h2 className="text-4xl font-bold mb-8">Революционизируйте вашу рекламу в Telegram с AI-powered TeleScanner</h2>
-                <button className="btn btn-secondary text-lg px-8 py-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                <button 
+                  className="btn btn-secondary text-lg px-8 py-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center"
+                  onClick={() => setShowQuiz(true)} // Вызов квиза при нажатии
+                >
                   <FaRocket className="inline mr-2" />
                   Начните умный поиск рекламных площадок
                   <FaArrowRight className="inline ml-2" />
@@ -447,30 +681,74 @@ function App() {
         </div>
       </div>
 
-      <footer className="bg-gray-800 text-white py-16 w-full">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div>
-            <h3 className="text-2xl font-semibold mb-4">TeleScanner</h3>
-            <p className="text-gray-400">Инновационное решение для поиска рекламных площадок в Telegram с использованием AI</p>
+      <footer className="bg-gradient-to-b from-gray-900 to-black text-white py-16 w-full">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div className="mb-8 md:mb-0">
+              <div className="flex items-center space-x-2 mb-6">
+                <FaBrain className="text-4xl text-blue-400" />
+                <h3 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600">TeleScanner</h3>
+              </div>
+              <p className="text-gray-400 mb-6 leading-relaxed">Инновационное решение для поиска рекламных площадок в Telegram с использованием AI</p>
+              <div className="flex space-x-4">
+                <a href="#" className="text-gray-400 hover:text-blue-400 transition duration-300 transform hover:scale-110">
+                  <FaFacebook className="text-2xl" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-blue-400 transition duration-300 transform hover:scale-110">
+                  <FaTwitter className="text-2xl" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-blue-400 transition duration-300 transform hover:scale-110">
+                  <FaLinkedin className="text-2xl" />
+                </a>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-xl font-semibold mb-6 text-blue-400">Быстрые ссылки</h4>
+              <ul className="space-y-3">
+                <li><a href="#features" className="text-gray-400 hover:text-white transition duration-300 flex items-center"><FaChevronRight className="mr-2 text-blue-400" />Преимущества</a></li>
+                <li><a href="#how-it-works" className="text-gray-400 hover:text-white transition duration-300 flex items-center"><FaChevronRight className="mr-2 text-blue-400" />Как это работает</a></li>
+                <li><a href="#pricing" className="text-gray-400 hover:text-white transition duration-300 flex items-center"><FaChevronRight className="mr-2 text-blue-400" />Тарифы</a></li>
+                <li><a href="#integrations" className="text-gray-400 hover:text-white transition duration-300 flex items-center"><FaChevronRight className="mr-2 text-blue-400" />Интеграции</a></li>
+                <li><a href="#faq" className="text-gray-400 hover:text-white transition duration-300 flex items-center"><FaChevronRight className="mr-2 text-blue-400" />FAQ</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xl font-semibold mb-6 text-blue-400">Поддержка</h4>
+              <ul className="space-y-3">
+                <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 flex items-center"><FaLifeRing className="mr-2 text-blue-400" />Центр помощи</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 flex items-center"><FaCode className="mr-2 text-blue-400" />Документация API</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 flex items-center"><FaServer className="mr-2 text-blue-400" />Статус системы</a></li>
+                <li><a href="#" className="text-gray-400 hover:text-white transition duration-300 flex items-center"><FaShieldAlt className="mr-2 text-blue-400" />Политика конфиденциальности</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xl font-semibold mb-6 text-blue-400">Свяжитесь с нами</h4>
+              <p className="text-gray-400 mb-4 flex items-center">
+                <FaEnvelope className="mr-3 text-blue-400" />
+                <a href="mailto:info@telescanner.com" className="hover:text-white transition duration-300">info@telescanner.com</a>
+              </p>
+              <p className="text-gray-400 mb-4 flex items-center">
+                <FaPhone className="mr-3 text-blue-400" />
+                <a href="tel:+79991234567" className="hover:text-white transition duration-300">+7 (999) 123-45-67</a>
+              </p>
+              <p className="text-gray-400 flex items-center">
+                <FaMapMarkerAlt className="mr-3 text-blue-400" />
+                Москва, ул. Примерная, д. 123
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 className="text-xl font-semibold mb-4">Быстрые ссылки</h4>
-            <ul className="space-y-2">
-              <li><a href="#features" className="text-gray-400 hover:text-white transition duration-300">Преимущества</a></li>
-              <li><a href="#how-it-works" className="text-gray-400 hover:text-white transition duration-300">Как это работает</a></li>
-              <li><a href="#pricing" className="text-gray-400 hover:text-white transition duration-300">Тарифы</a></li>
-            </ul>
+          <div className="mt-12 pt-8 border-t border-gray-800 text-center">
+            <p className="text-gray-400">© 2023 TeleScanner. Все права защищены.</p>
+            <div className="mt-4 flex justify-center space-x-4">
+              <a href="#" className="text-sm text-gray-400 hover:text-white transition duration-300">Условия использования</a>
+              <span className="text-gray-600">|</span>
+              <a href="#" className="text-sm text-gray-400 hover:text-white transition duration-300">Политика конфиденциальности</a>
+            </div>
           </div>
-          <div>
-            <h4 className="text-xl font-semibold mb-4">Свяжитесь с нами</h4>
-            <p className="text-gray-400">Email: info@telescanner.com</p>
-            <p className="text-gray-400">Телефон: +7 (999) 123-45-67</p>
-          </div>
-        </div>
-        <div className="mt-12 text-center text-sm text-gray-400">
-          © 2023 TeleScanner. Все права защищены.
         </div>
       </footer>
+
+      {showQuiz && <QuizModal onClose={() => setShowQuiz(false)} />}
     </div>
   );
 }

@@ -22,14 +22,64 @@ body {
 /* Custom utility classes */
 .btn {
   @apply font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Добавлена тень */
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-primary {
-  @apply bg-blue-600 text-white hover:bg-blue-700;
+  @apply bg-blue-600 text-white;
+  background: linear-gradient(135deg, #007bff, #0056b3); /* Градиент для кнопки */
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0056b3, #003d80); /* Изменение градиента при наведении */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Увеличение те��и при наведении */
+  transform: translateY(-2px) scale(1.05); /* Легкий подъем и увеличение кнопки при наведении */
 }
 
 .btn-secondary {
-  @apply bg-white text-blue-600 hover:bg-blue-100;
+  @apply bg-white text-blue-600;
+  background: linear-gradient(135deg, #ffffff, #f0f0f0); /* Градиент для кнопки */
+  border: 1px solid #0056b3; /* Добавлена граница */
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #f0f0f0, #e0e0e0); /* Изменение градиента при наведении */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Увеличение тени при наведении */
+  transform: translateY(-2px) scale(1.05); /* Легкий подъем и увеличение кнопки при наведении */
+}
+
+.btn:active {
+  transform: translateY(0) scale(1); /* Возвращение кнопки в исходное положение при нажатии */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Уменьшение тени при нажатии */
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.btn:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.btn span {
+  position: relative;
+  z-index: 1;
 }
 
 .section-title {
