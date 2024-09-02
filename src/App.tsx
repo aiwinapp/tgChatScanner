@@ -5,6 +5,7 @@ import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 import './App.css';
 import { motion } from 'framer-motion';
+import { IconType } from 'react-icons'; // Add this import
 
 const StyledSignInButton: React.FC<{ className?: string }> = ({ className }) => (
   <div className={className}>
@@ -103,7 +104,7 @@ function App() {
         { text: 'Безлимитный анализ чатов', tooltip: 'Анализируйте любое количество чатов' },
         { text: 'Премиум AI-аналитика', tooltip: 'Самые передовые алгоритмы анализа' },
         { text: 'Отчеты в реальном времени', tooltip: 'Мговенный доступ к актуальным данным' },
-        { text: 'Персональный менеджер', tooltip: 'Выделенный специаист для вашего аккаунта' },
+        { text: 'Персональный менеджер', tooltip: 'Выделенный специаист для ваш��го аккаунта' },
         { text: 'API доступ', tooltip: 'Интегрируйте наши данные в свои системы' },
         { text: 'Индивидуальная настройка', tooltip: 'Настройка под ваши уникальные потребности' }
       ],
@@ -474,7 +475,7 @@ function App() {
   );
 }
 
-// Add this component outside of the App function
+// Update the StatItem component definition
 const StatItem: React.FC<{ icon: IconType; value: number; label: string; suffix?: string }> = ({ icon: Icon, value, label, suffix = '' }) => (
   <div className="text-center p-6 bg-gray-50 rounded-lg shadow-md transform hover:scale-105 transition-transform duration-300">
     <Icon className="text-5xl mb-4 mx-auto text-blue-600" />
